@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, ViewStyle } from "react-native";
+import { View } from "react-native";
 import WebView, { WebViewProps } from "react-native-webview";
 
 type MathJaxProps = WebViewProps & {
@@ -8,8 +8,8 @@ type MathJaxProps = WebViewProps & {
   css?: {
     color?: string;
     backgroundColor?: string;
-    fontSize?: number;
-    padding?: number;
+    fontSize?: string;
+    padding?: string;
   };
 };
 
@@ -38,8 +38,13 @@ const defaultOptions = {
   },
 };
 
-const MathJax: React.FC<MathJaxProps> = ({ props }: MathJaxProps) => {
-  const [height, setHeight] = useState < number > 1;
+const MathJax: React.FC<MathJaxProps> = ({
+  html,
+  css,
+  mathJaxOptions,
+  ...filteredProps
+}: MathJaxProps) => {
+  const [height, setHeight] = useState<number>(1);
 
   const handleMessage = (message: { nativeEvent: { data: string } }) => {
     setHeight(Number(message.nativeEvent.data));
@@ -47,7 +52,7 @@ const MathJax: React.FC<MathJaxProps> = ({ props }: MathJaxProps) => {
 
   const wrapMathjax = (content: string): string => {
     const options = JSON.stringify(
-      Object.assign({}, defaultOptions, props.mathJaxOptions)
+      Object.assign({}, defaultOptions, mathJaxOptions)
     );
     return `
       <html>
@@ -62,12 +67,12 @@ const MathJax: React.FC<MathJaxProps> = ({ props }: MathJaxProps) => {
         <body style="display: contents;">
           <div id="loader"></div>
           <div id="formula" style="visibility:hidden;color:${
-            props.css?.color || "#ffffff"
-          };background:${props.css?.backgroundColor || "#20ad96"};font-size:${
-      props.css?.fontSize || 18
-    }px;padding:${
-      props.css?.padding || 0
-    }px;max-height:fit-content;max-width:fit-content;overflow:auto;">${content}</div>
+            css?.color || "#000000"
+          };background:${css?.backgroundColor || "#ffffff"};font-size:${
+      css?.fontSize || 14 + "px"
+    };padding:${
+      css?.padding || 0
+    };max-height:fit-content;max-width:fit-content;overflow:auto;">${content}</div>
           <script type="text/x-mathjax-config">
           MathJax.Hub.Config(${options});
           MathJax.Hub.Queue(function(){let height = document.getElementById("formula").scrollHeight;document. getElementById("loader").style.display="none";document.getElementById("formula").style.visibility="";window.ReactNativeWebView.postMessage(String(height))});
@@ -78,12 +83,7 @@ const MathJax: React.FC<MathJaxProps> = ({ props }: MathJaxProps) => {
     `;
   };
 
-  const html = wrapMathjax(props.html);
-
-  const filteredProps = { ...props };
-  delete filteredProps.html;
-  delete filteredProps.css;
-  delete filteredProps.mathJaxOptions;
+  html = wrapMathjax(html);
 
   return (
     <View style={{ height }}>
@@ -92,7 +92,6 @@ const MathJax: React.FC<MathJaxProps> = ({ props }: MathJaxProps) => {
         javaScriptEnabled={true}
         originWhitelist={["*"]}
         onMessage={handleMessage}
-        onError={(e) => console.error(e)}
         source={{ html }}
         {...filteredProps}
       />
