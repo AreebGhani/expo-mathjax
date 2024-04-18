@@ -1,5 +1,11 @@
 import { StatusBar } from "expo-status-bar";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import MathJax from "./MathJax";
 
 const App = () => {
@@ -86,21 +92,43 @@ const App = () => {
     },
   };
 
+  const Loader = () => (
+    <View
+      style={{
+        height: 38,
+        width: 38,
+        backgroundColor: "#20AD96",
+      }}
+    >
+      <ActivityIndicator size="small" />
+    </View>
+  );
+
   return (
     <>
       <StatusBar style="auto" />
       <View style={styles.view}>
         <Text style={styles.text}>React Native Mathjax</Text>
       </View>
-      <ScrollView>
+      <ScrollView style={{ backgroundColor: "#20AD96" }}>
         {messages.map((message) => (
           <MathJax
             key={message.id}
             html={message.content}
             mathJaxOptions={options}
+            contentLoader={Loader}
             css={{
-              padding: "26px",
-              lineHeight: "28px",
+              fontSize: "0.9em",
+              backgroundColor: "#20AD96",
+              color: "#ffffff",
+              fontWeight: "500",
+              lineHeight: "20px",
+              padding: "10px",
+            }}
+            style={{
+              backgroundColor: "#20AD96",
+              borderWidth: 0,
+              borderColor: "transparent",
             }}
           />
         ))}
