@@ -16,31 +16,6 @@ type MathJaxProps = WebViewProps & {
   };
 };
 
-const defaultOptions = {
-  messageStyle: "none",
-  extensions: ["tex2jax.js"],
-  jax: ["input/TeX", "output/HTML-CSS"],
-  tex2jax: {
-    inlineMath: [
-      ["$", "$"],
-      ["\\(", "\\)"],
-    ],
-    displayMath: [
-      ["$$", "$$"],
-      ["\\[", "\\]"],
-    ],
-    processEscapes: true,
-  },
-  TeX: {
-    extensions: [
-      "AMSmath.js",
-      "AMSsymbols.js",
-      "noErrors.js",
-      "noUndefined.js",
-    ],
-  },
-};
-
 const MathJax: React.FC<MathJaxProps> = ({
   html,
   mathJaxOptions,
@@ -61,6 +36,43 @@ const MathJax: React.FC<MathJaxProps> = ({
     setLoading(false);
   };
 
+  const defaultOptions = {
+    messageStyle: "none",
+    showMathMenu: false,
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/CommonHTML"],
+    tex2jax: {
+      inlineMath: [
+        ["$", "$"],
+        ["\\(", "\\)"],
+      ],
+      displayMath: [
+        ["$$", "$$"],
+        ["\\[", "\\]"],
+      ],
+      processEscapes: true,
+    },
+    TeX: {
+      extensions: [
+        "AMSmath.js",
+        "AMSsymbols.js",
+        "noErrors.js",
+        "noUndefined.js",
+      ],
+    },
+    CommonHTML: {
+      linebreaks: { automatic: true },
+    },
+    styles: {
+      ".MathJax_Display": {
+        background: css?.backgroundColor || "#ffffff",
+      },
+      body: {
+        background: css?.backgroundColor || "#ffffff",
+      },
+    },
+  };
+
   const wrapMathjax = (content: string): string => {
     const options = JSON.stringify(
       Object.assign({}, defaultOptions, mathJaxOptions)
@@ -71,7 +83,11 @@ const MathJax: React.FC<MathJaxProps> = ({
       };">
         <head>
           <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-          <style>*{margin:0;padding:0;box-sizing:border-box}</style>
+          <style>
+            *{margin:0;padding:0;box-sizing:border-box}
+            #MathJax_Message {${css?.fontSize || "14px"}}
+            a {color: white !important;text-decoration: underline !important}
+          </style>
         </head>
         <body style="display:contents;border:none;padding-bottom:100px;background:${
           css?.backgroundColor || "#ffffff"
@@ -79,7 +95,7 @@ const MathJax: React.FC<MathJaxProps> = ({
           <div id="formula" style="visibility:hidden;color:${
             css?.color || "#000000"
           };background:${css?.backgroundColor || "#ffffff"};font-size:${
-      css?.fontSize || 14 + "px"
+      css?.fontSize || "14px"
     };padding:${css?.padding || 0};line-height:${
       css?.lineHeight || "20px"
     };font-weight:${
@@ -102,10 +118,28 @@ const MathJax: React.FC<MathJaxProps> = ({
   return (
     <>
       {loading && RenderLoading && RenderLoading}
-      <View style={{ height, borderWidth: 0, borderColor: "transparent" }}>
+      <View
+        style={{
+          height,
+          borderWidth: 0,
+          borderColor: "transparent",
+          backgroundColor: css?.backgroundColor || "#ffffff",
+        }}
+      >
         <WebView
+          bounces={false}
+          overScrollMode="never"
+          scalesPageToFit={true}
           scrollEnabled={false}
-          bounce={false}
+          setBuiltInZoomControls={false}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          keyboardDisplayRequiresUserAction={false}
+          hideKeyboardAccessoryView={true}
+          textInteractionEnabled={false}
+          useWebView2={true}
+          thirdPartyCookiesEnabled={true}
+          startInLoadingState={false}
           javaScriptEnabled={true}
           originWhitelist={["*"]}
           onMessage={handleMessage}

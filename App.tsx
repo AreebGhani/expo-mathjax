@@ -68,27 +68,39 @@ const App = () => {
   ];
 
   const options = {
-    messageStyle: "none",
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX", "output/HTML-CSS"],
+    messageStyle: 'none',
+    showMathMenu: false,
+    extensions: ['tex2jax.js'],
+    jax: ['input/TeX', 'output/CommonHTML'],
     tex2jax: {
       inlineMath: [
-        ["$", "$"],
-        ["\\(", "\\)"],
+        ['$', '$'],
+        ['\\(', '\\)'],
       ],
       displayMath: [
-        ["$$", "$$"],
-        ["\\[", "\\]"],
+        ['$$', '$$'],
+        ['\\[', '\\]'],
       ],
       processEscapes: true,
     },
     TeX: {
       extensions: [
-        "AMSmath.js",
-        "AMSsymbols.js",
-        "noErrors.js",
-        "noUndefined.js",
+        'AMSmath.js',
+        'AMSsymbols.js',
+        'noErrors.js',
+        'noUndefined.js',
       ],
+    },
+    CommonHTML: {
+      linebreaks: {automatic: true},
+    },
+    styles: {
+      '.MathJax_Display': {
+        background: '#20AD96',
+      },
+      body: {
+        background: '#20AD96',
+      },
     },
   };
 
@@ -118,7 +130,7 @@ const App = () => {
             mathJaxOptions={options}
             contentLoader={Loader}
             css={{
-              fontSize: "0.9em",
+              fontSize: "18px",
               backgroundColor: "#20AD96",
               color: "#ffffff",
               fontWeight: "500",
